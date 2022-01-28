@@ -7,6 +7,8 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 git_base=$INPUT_BASE
 git_head=$INPUT_HEAD
 
+echo "$INPUT_BASE | $INPUT_HEAD | $INPUT_IGNORED_CODES | $INPUT_SHELL_SCRIPTS"
+
 # ------------ #
 #  FILE PATHS  #
 # ------------ #
