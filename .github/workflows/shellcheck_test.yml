@@ -1,0 +1,28 @@
+name: Test Differential ShellCheck
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellCheck:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+
+    steps:   
+      - name: Repository checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}  
+      
+      # - name: Run shell-check test
+      #   run: |
+      #     bash ./.github/workflows/check-shell.sh ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
+
+      - name: Differential ShellCheck
+        uses: ./
+        # uses: actions/differential-shellcheck@v1
+      
+      # Output...

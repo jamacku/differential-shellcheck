@@ -1,0 +1,20 @@
+name: 'Differential ShellCheck'
+description: 'Differential ShellCheck'
+inputs:
+  base:
+    description: 'Repository base'
+    required: true
+    default: ${{ github.event.pull_request.base.sha }}
+  head:
+    description: 'Head of changes'
+    required: true
+    default: ${{ github.event.pull_request.head.sha }}
+outputs:
+  result: 
+    description: 'Result of Differential ShellCheck'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.base }}
+    - ${{ inputs.head }}
