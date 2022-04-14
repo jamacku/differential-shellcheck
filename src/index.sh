@@ -18,6 +18,12 @@ git config --global --add safe.directory /github/workspace
 # get names of files from PR (excluding deleted files)
 git diff --name-only --diff-filter=db "$git_base".."$git_head" > ../pr-changes.txt
 
+echo "-"
+cat ../pr-changes.txt
+echo "-"
+
+set -x
+
 # Find modified shell scripts
 list_of_changes=()
 file_to_array "../pr-changes.txt" "list_of_changes" 0
@@ -31,6 +37,8 @@ for file in "${list_of_changes[@]}"; do
   check_extension "$file" && list_of_changed_scripts+=("./${file}") && continue
   check_shebang "$file" && list_of_changed_scripts+=("./${file}")
 done
+
+set +x
 
 # Expose list_of_changed_scripts[*] for use inside GA workflow
 echo "LIST_OF_SCRIPTS=${list_of_changed_scripts[*]}" >> "$GITHUB_ENV"
@@ -75,12 +83,11 @@ echo -e "::: ${WHITE}Validation Output${NOCOLOR} :::"
 echo ":::::::::::::::::::::::::"
 echo -e "\n"
 
-
 # Check output for Fixes
 csdiff --fixed "../dest-br-shellcheck.err" "../pr-br-shellcheck.err" > ../fixes.log
 
 # Expose number of solved issues for use inside GA workflow
-no_fixes=$(grep -Eo "[0-9]*" < <(csgrep --mode=stat ../fixes.log))
+no_fixes=$(grep -Eo "[0-9]*" < <(csgrep --mode=sarif ../fixes.log))
 echo "NUMBER_OF_SOLVED_ISSUES=${no_fixes:-0}" >> "$GITHUB_ENV"
 
 if [ "$(cat ../fixes.log | wc -l)" -ne 0 ]; then
@@ -98,7 +105,7 @@ echo -e "\n"
 csdiff --fixed "../pr-br-shellcheck.err" "../dest-br-shellcheck.err" > ../bugs.log
 
 # Expose number of added issues for use inside GA workflow
-no_issues=$(grep -Eo "[0-9]*" < <(csgrep --mode=stat ../bugs.log))
+no_issues=$(grep -Eo "[0-9]*" < <(csgrep --mode=sarif ../bugs.log))
 echo "NUMBER_OF_ADDED_ISSUES=${no_issues:-0}" >> "$GITHUB_ENV"
 
 if [ "$(cat ../bugs.log | wc -l)" -ne 0 ]; then
