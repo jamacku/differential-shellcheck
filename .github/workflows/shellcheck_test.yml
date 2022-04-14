@@ -1,26 +1,21 @@
 name: Test Differential ShellCheck
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, use-sarif]
 
 jobs:
   shellCheck:
     runs-on: ubuntu-20.04
-    defaults:
-      run:
-        shell: bash
 
     steps:   
       - name: Repository checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}  
+          fetch-depth: 0 
 
       - name: Differential ShellCheck
         uses: ./
         with:
           ignored-codes: .github/.diff-shellcheck-exceptions.txt
           shell-scripts: .github/.diff-shellcheck-scripts.txt
+          token: ${{ secrets.GITHUB_TOKEN }}
