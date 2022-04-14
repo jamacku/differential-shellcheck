@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 . $SCRIPT_DIR/functions.sh
@@ -75,12 +77,11 @@ echo -e "::: ${WHITE}Validation Output${NOCOLOR} :::"
 echo ":::::::::::::::::::::::::"
 echo -e "\n"
 
-
 # Check output for Fixes
 csdiff --fixed "../dest-br-shellcheck.err" "../pr-br-shellcheck.err" > ../fixes.log
 
 # Expose number of solved issues for use inside GA workflow
-no_fixes=$(grep -Eo "[0-9]*" < <(csgrep --mode=stat ../fixes.log))
+no_fixes=$(grep -Eo "[0-9]*" < <(csgrep --mode=sarif ../fixes.log))
 echo "NUMBER_OF_SOLVED_ISSUES=${no_fixes:-0}" >> "$GITHUB_ENV"
 
 if [ "$(cat ../fixes.log | wc -l)" -ne 0 ]; then
@@ -98,7 +99,7 @@ echo -e "\n"
 csdiff --fixed "../pr-br-shellcheck.err" "../dest-br-shellcheck.err" > ../bugs.log
 
 # Expose number of added issues for use inside GA workflow
-no_issues=$(grep -Eo "[0-9]*" < <(csgrep --mode=stat ../bugs.log))
+no_issues=$(grep -Eo "[0-9]*" < <(csgrep --mode=sarif ../bugs.log))
 echo "NUMBER_OF_ADDED_ISSUES=${no_issues:-0}" >> "$GITHUB_ENV"
 
 if [ "$(cat ../bugs.log | wc -l)" -ne 0 ]; then
