@@ -16,7 +16,12 @@ git config --global --add safe.directory /github/workspace
 
 # https://github.com/actions/runner/issues/342
 # get names of files from PR (excluding deleted files)
-git diff --no-index --name-only --diff-filter=db "$git_base".."$git_head" > ../pr-changes.txt
+git diff --name-only --diff-filter=db "$git_base".."$git_head" > ../pr-changes.txt
+
+cat ../pr-changes.txt
+
+A='a a'
+echo $A
 
 # Find modified shell scripts
 list_of_changes=()
