@@ -33,7 +33,7 @@ check_shebang () {
 
   if IFS= read -r line < "./${file}" ; then
     case $line in
-      "#!/bin/bash") return 0;;
+      "#!/bin/bash"
       "#!/bin/sh") return 0;;
       *) return 1
     esac
@@ -82,6 +82,8 @@ clean_array () {
     eval $output+=\("${i//[$'\t\r\n ']}"\)
   done
 }
+
+qasdfwasd
 
 # Color aliases use echo -e to use them
 export NOCOLOR='\033[0m'
