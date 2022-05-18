@@ -83,6 +83,9 @@ clean_array () {
   done
 }
 
+a="a a"
+echo $a
+
 # Color aliases use echo -e to use them
 export NOCOLOR='\033[0m'
 export RED='\033[0;31m'
