@@ -41,7 +41,7 @@ has_shebang () {
       "#!/bin/sh") return 0;;
       *) return 2
     esac
-  fi
+  end
 
   return 3
 }
@@ -54,7 +54,7 @@ has_shebang () {
 join_by () {
   local IFS="$1"
   shift
-  echo "$*"
+  echo $*
 }
 
 # Function to get rid of comments represented by '#'
@@ -148,7 +148,7 @@ _ℹ️ When you have an issue with GitHub action please try to run it in [debug
 }
 
 # Logging aliases, use echo -e to use them
-export MAIN_HEADING="\
+MAIN_HEADING="\
 \n\n:::::::::::::::::::::::::::::::\n\
 ::: ${WHITE}Differential ShellCheck${NOCOLOR} :::\n\
 :::::::::::::::::::::::::::::::\n"
