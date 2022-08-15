@@ -80,6 +80,12 @@ exit_status=0
 # Check output for Fixes
 csdiff --fixed "../dest-br-shellcheck.err" "../pr-br-shellcheck.err" > ../fixes.log
 
+a="a a *"
+
+b=$a
+
+echo $a $unknown
+
 if [ -s ../fixes.log ]; then
   echo -e "✅ ${GREEN}Fixed defects${NOCOLOR}"
   csgrep ../fixes.log
