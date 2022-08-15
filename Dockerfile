@@ -3,8 +3,8 @@ FROM fedora:36
 RUN dnf -y update \
     && dnf -y install git ShellCheck \
     && sudo dnf install -y dnf-plugins-core \
-    && sudo dnf copr enable packit/csutils-csdiff-68 \
-    && sudo dnf install -y python3-csdiff-2.6.0.20220801.170007.g7a51868.pr_68-1.fc36.x86_64 csdiff-2.6.0.20220801.170007.g7a51868.pr_68-1.fc36.x86_64 csdiff-debugsource-2.6.0.20220801.170007.g7a51868.pr_68-1.fc36.x86_64 csdiff-debuginfo-2.6.0.20220801.170007.g7a51868.pr_68-1.fc36.x86_64 python3-csdiff-debuginfo-2.6.0.20220801.170007.g7a51868.pr_68-1.fc36.x86_64 \
+    && sudo dnf copr enable -y packit/csutils-csdiff-68 \
+    && sudo dnf install -y csdiff-2.6.0.20220816.095121.g2fea428.pr_68-None.fc36.x86_64 csdiff-debuginfo-2.6.0.20220816.095121.g2fea428.pr_68-None.fc36.x86_64 python3-csdiff-debuginfo-2.6.0.20220816.095121.g2fea428.pr_68-None.fc36.x86_64 python3-csdiff-2.6.0.20220816.095121.g2fea428.pr_68-None.fc36.x86_64 csdiff-debugsource-2.6.0.20220816.095121.g2fea428.pr_68-None.fc36.x86_64 \
     && dnf clean all
 
 RUN mkdir -p /action
