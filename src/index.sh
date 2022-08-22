@@ -107,6 +107,8 @@ else
   exit_status=0
 fi
 
+echo $a $unknown
+
 # SARIF upload
 if [ -n "$INPUT_TOKEN" ]; then
   echo
