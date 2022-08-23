@@ -113,6 +113,8 @@ if [ -n "$INPUT_TOKEN" ]; then
     # csgrep reports 'csdiff' as the tool that has generated the reports, so
     # change it to 'ShellCheck' instead.
     sed 's/"csdiff"/"ShellCheck"/' >> output.sarif && uploadSARIF
+
+    cat output.sarif
 fi
 
 summary >> "$GITHUB_STEP_SUMMARY"
