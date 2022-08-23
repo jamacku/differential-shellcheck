@@ -98,6 +98,8 @@ echo
 # Check output for added defects
 csdiff --fixed "../pr-br-shellcheck.err" "../dest-br-shellcheck.err" > ../defects.log
 
+if [ -s "" ]; then
+
 if [ -s ../defects.log ]; then
   echo -e "✋ ${YELLOW}Added defects, NEEDS INSPECTION${NOCOLOR}"
   csgrep ../defects.log
