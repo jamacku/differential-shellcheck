@@ -4,6 +4,12 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 . $SCRIPT_DIR/functions.sh
 
+w="a * a"
+
+echo $w
+
+. $w || echo "b"
+
 declare \
   GITHUB_ENV \
   GITHUB_STEP_SUMMARY \
@@ -80,20 +86,12 @@ exit_status=0
 # Check output for Fixes
 csdiff --fixed "../dest-br-shellcheck.err" "../pr-br-shellcheck.err" > ../fixes.log
 
-a="a a *"
-
-b=$a
-
-echo $a $unknown
-
 if [ -s ../fixes.log ]; then
   echo -e "✅ ${GREEN}Fixed defects${NOCOLOR}"
   csgrep ../fixes.log
 else
   echo -e "ℹ️ ${YELLOW}No Fixes!${NOCOLOR}"
 fi
-
-echo
 
 # Check output for added defects
 csdiff --fixed "../pr-br-shellcheck.err" "../dest-br-shellcheck.err" > ../defects.log
@@ -106,8 +104,6 @@ else
   echo -e "🥳 ${GREEN}No defects added. Yay!${NOCOLOR}"
   exit_status=0
 fi
-
-echo $a $unknown
 
 # SARIF upload
 if [ -n "$INPUT_TOKEN" ]; then
