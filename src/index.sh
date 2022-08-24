@@ -4,6 +4,8 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 . $SCRIPT_DIR/functions.sh
 
+. $source
+
 declare \
   GITHUB_ENV \
   GITHUB_STEP_SUMMARY \
