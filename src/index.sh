@@ -38,6 +38,8 @@ for file in "${list_of_changes[@]}"; do
   has_shebang "$file" && list_of_changed_scripts+=("./${file}")
 done
 
+unused=
+
 # Expose list_of_changed_scripts[*] for use within the GA workflow
 echo "LIST_OF_SCRIPTS=${list_of_changed_scripts[*]}" >> "$GITHUB_ENV"
 
