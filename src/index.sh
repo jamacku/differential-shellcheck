@@ -111,6 +111,8 @@ if [ -n "$INPUT_TOKEN" ]; then
     sed 's/"csdiff"/"ShellCheck"/' >> output.sarif && uploadSARIF
 fi
 
+cat output.sarif
+
 summary >> "$GITHUB_STEP_SUMMARY"
 
 exit $exit_status
