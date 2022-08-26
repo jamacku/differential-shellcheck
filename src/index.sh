@@ -17,6 +17,10 @@ declare \
 #  FILE PATHS  #
 # ------------ #
 
+a="a *"
+
+echo $a
+
 # Make directory $GITHUB_WORKSPACE (/github/workspace) git-save
 git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 
