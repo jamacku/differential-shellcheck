@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# If index.sh was executed then exit
+[[ -f defects.sarif ]] && exit
+
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 . $SCRIPT_DIR/functions.sh
@@ -101,15 +104,13 @@ else
   exit_status=0
 fi
 
-# SARIF upload
-if [ -n "$INPUT_TOKEN" ]; then
-  echo
-  # GitHub requires an absolute path, so let's remove the './' prefix from it.
-  csgrep --strip-path-prefix './' --mode=sarif ../defects.log | \
-    # csgrep reports 'csdiff' as the tool that has generated the reports, so
-    # change it to 'ShellCheck' instead.
-    sed 's/"csdiff"/"ShellCheck"/' >> output.sarif && uploadSARIF
-fi
+# Generate SARIF
+echo
+# GitHub requires an absolute path, so let's remove the './' prefix from it.
+csgrep --strip-path-prefix './' --mode=sarif ../defects.log | \
+  # csgrep reports 'csdiff' as the tool that has generated the reports, so
+  # change it to 'ShellCheck' instead.
+  sed 's/"csdiff"/"ShellCheck"/' > defects.sarif
 
 summary >> "$GITHUB_STEP_SUMMARY"
 

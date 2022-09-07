@@ -1,7 +1,7 @@
 ---
 
-name: Differential ShellCheck
-description: Differential ShellCheck
+name: Differential ShellCheck Core
+description: Differential ShellCheck Core
 
 branding:
   icon: check-circle
@@ -37,33 +37,14 @@ inputs:
     description: GitHub TOKEN used to upload SARIF data
     required: false
 
+outputs:
+  sarif:
+    description: 'The SARIF with defects introduced via PR'
+
 runs:
-  using: composite
-  steps:
-    - id: core
-      name: Run Differential ShellCheck Core
-      uses: ./core
-      with:
-        base: ${{ inputs.base }}
-        head: ${{ inputs.head }}
-        ignored-codes: ${{ inputs.ignored-codes }}    # <-- Deprecated option
-        shell-scripts: ${{ inputs.shell-scripts }}
-        external-sources: ${{ inputs.external-sources }}
-        severity: ${{ inputs.severity }}
-        token: ${{ inputs.token }}
-
-    - if: ${{ always() }}
-      name: Upload artifact with defects in SARIF format
-      uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8
-      with:
-        name: defects.sarif
-        path: defects.sarif
-        retention-days: 7
-
-    - if: ${{ inputs.token && always() }}
-      name: Upload SARIF
-      uses: github/codeql-action/upload-sarif@b398f525a5587552e573b247ac661067fafa920b
-      with:
-        sarif_file: defects.sarif
-        category: ShellCheck
-        token: ${{ inputs.token }}
+  using: docker
+  image: docker://ghcr.io/redhat-plumbers-in-action/differential-shellcheck:v3.1.0
+  env:
+    INPUT_IGNORED_CODES: ${{ inputs.ignored-codes }}
+    INPUT_SHELL_SCRIPTS: ${{ inputs.shell-scripts }}
+    INPUT_EXTERNAL_SOURCES: ${{ inputs.external-sources }}

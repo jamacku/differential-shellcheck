@@ -24,10 +24,10 @@ jobs:
           fetch-depth: 0
 
       # Replace docker://ghcr.io/redhat-plumbers-in-action/differential-shellcheck:vX.Y.Z with Dockerfile
-      - name: Edit an action.yml file to test current changes
+      - name: Edit an core/action.yml file to test current changes
         if: github.event_name == 'pull_request'
         run: |
-          sed -i "s/docker:\/\/ghcr\.io\/redhat-plumbers-in-action\/differential-shellcheck.*/Dockerfile/g" action.yml
+          sed -i "s/docker:\/\/ghcr\.io\/redhat-plumbers-in-action\/differential-shellcheck.*/Dockerfile/g" core/action.yml
 
       - name: Differential ShellCheck - test current changes
         uses: ./
