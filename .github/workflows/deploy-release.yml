@@ -72,7 +72,7 @@ jobs:
       - name: Build Docker image - ${{ matrix.images.image-id }}
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./core
           file: ./core/Dockerfile
           build-args: |
             BUILD_DATE=${{ env.BUILD_DATE }}
