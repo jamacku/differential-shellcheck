@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # If index.sh was executed then exit
-[[ -f defects.sarif ]] && exit
+[ -f defects.sarif ] && exit
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
@@ -52,7 +52,7 @@ string_of_exceptions=$(join_by , "${list_of_exceptions[@]}")
 echo -e "${MAIN_HEADING}"
 
 if is_debug ; then 
-  echo -e "📜 ${WHITE}Changed shell scripts${NOCOLOR}"
+  echo -e "📜 $WHITEChanged shell scripts${NOCOLOR}"
   echo "${list_of_changed_scripts[@]}"
   echo
   echo -e "👌 ${WHITE}List of ShellCheck exceptions${NOCOLOR}"
