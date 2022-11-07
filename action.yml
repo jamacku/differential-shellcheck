@@ -62,7 +62,7 @@ runs:
 
     - if: ${{ inputs.token && always() }}
       name: Upload SARIF
-      uses: github/codeql-action/upload-sarif@b398f525a5587552e573b247ac661067fafa920b
+      uses: github/codeql-action/upload-sarif@c3b6fce4ee2ca25bc1066aa3bf73962fda0e8898
       with:
         sarif_file: defects.sarif
         category: ShellCheck
