@@ -34,20 +34,24 @@ if [[ ${FULL_SCAN} -eq 0 ]]; then
   git ls-tree -r --name-only -z "${GITHUB_REF_NAME-"main"}" > "${WORK_DIR}files.txt"
 
   all_scripts=()
-  get_scripts_for_scanning "${WORK_DIR}files.txt" "all_scripts"
+  get_scripts_for_scanning "${WORK_DIR}files.txt" "all_scripts" "${FULL_SCAN}"
 fi
 
 if ! [[ ${FULL_SCAN} -eq 0 ]] || ! is_strict_check_on_push_demanded; then
   # https://github.com/actions/runner/issues/342
   # Get the names of files from range of commits (excluding deleted files)
   # BASE and HEAD are always set, it is checked inside pick_base_and_head_hash function
-  if ! git diff --name-only -z --diff-filter=db "${BASE}".."${HEAD}" > "${WORK_DIR}changed-files.txt"; then
+  if ! git diff --name-status --find-copies --numstat --relative --diff-filter=db "${BASE}".."${HEAD}" > "${WORK_DIR}changed-files.txt"; then
     echo "::warning:: Please check if the repository was cloned with \`fetch-depth: 0\`. Differential ShellCheck needs the entire history to work correctly."
      exit 1
   fi
 
   only_changed_scripts=()
-  get_scripts_for_scanning "${WORK_DIR}changed-files.txt" "only_changed_scripts"
+  get_scripts_for_scanning "${WORK_DIR}changed-files.txt" "only_changed_scripts" "${FULL_SCAN}"
+
+  changed_scripts_base=()
+  changed_scripts_head=()
+  split_array_by_tab "${only_changed_scripts[@]}" "changed_scripts_base" "changed_scripts_head"
 fi
 
 echo -e "${VERSIONS_HEADING}"
@@ -56,7 +60,7 @@ show_versions
 echo -e "${MAIN_HEADING}"
 
 echo -e "::group::📜 ${WHITE}List of shell scripts for scanning${NOCOLOR}"
-  echo "${all_scripts[@]:-${only_changed_scripts[@]}}"
+  echo "${all_scripts[@]:-${changed_scripts_head[@]}}"
 echo "::endgroup::"
 echo
 
@@ -71,14 +75,14 @@ fi
 exit_status=0
 
 if ! is_strict_check_on_push_demanded; then
-  execute_shellcheck "${only_changed_scripts[@]}" > "${WORK_DIR}head-shellcheck.err"
+  execute_shellcheck "${changed_scripts_head[@]}" > "${WORK_DIR}head-shellcheck.err"
 
   # Save the current state of the working directory
   git stash push --quiet
   # Checkout the base branch/commit
   git checkout --force --quiet -b ci_br_dest "${BASE}" || git checkout --force --quiet "${BASE}"
 
-  execute_shellcheck "${only_changed_scripts[@]}" > "${WORK_DIR}base-shellcheck.err"
+  execute_shellcheck "${changed_scripts_base[@]}" > "${WORK_DIR}base-shellcheck.err"
 
   get_fixes "${WORK_DIR}base-shellcheck.err" "${WORK_DIR}head-shellcheck.err"
   evaluate_and_print_fixes

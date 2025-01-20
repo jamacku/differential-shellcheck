@@ -1,0 +1,8 @@
+M	test/fixtures/get_scripts_for_scanning/files.txt
+M	test/fixtures/get_scripts_for_scanning/non-script.md
+M	test/fixtures/get_scripts_for_scanning/script1.sh
+R	test/fixtures/get_scripts_for_scanning/script2	test/fixtures/get_scripts_for_scanning/script1.sh
+M	test/fixtures/get_scripts_for_scanning/script 2.sh
+R	test/fixtures/get_scripts_for_scanning/script&3.sh	test/fixtures/get_scripts_for_scanning/$script4.sh
+M	test/fixtures/get_scripts_for_scanning/$script4.sh
+M	test/fixtures/get_scripts_for_scanning/dm-back\x2dslash.swap

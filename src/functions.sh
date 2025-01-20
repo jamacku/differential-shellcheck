@@ -87,23 +87,32 @@ pick_base_and_head_hash () {
 # https://stackoverflow.com/a/12985353/10221282
 # $1 - <string> absolute path to a file with list of files
 # $2 - <string> name of a variable where the result array will be stored
+# $3 - <0|1> is full scan - 0 ~ true, 1 ~ false
 get_scripts_for_scanning () {
-  [[ $# -le 1 ]] && return 1
+  [[ $# -le 2 ]] && return 1
   local output=$2
+  local full_scan=$3
 
   # Find modified shell scripts
   local list_of_changes=()
-  file_to_array "${1}" "list_of_changes"
+  [[ ${full_scan} -eq 0 ]] && file_to_array "${1}" "list_of_changes"
+  [[ ${full_scan} -eq 1 ]] && tab_separated_file_to_array "${1}" "list_of_changes"
 
   # Create a list of scripts for testing
   local scripts_for_scanning=()
-  for file in "${list_of_changes[@]}"; do
+  for line in "${list_of_changes[@]}"; do
+    local file
+    local scanning_path
+    [[ ${full_scan} -eq 0 ]] && file="${line}" && scanning_path="./${file}"
+    # When diff scan is performed, we wan't to keep information about the original file path in case of renaming
+    [[ ${full_scan} -eq 1 ]] && file=$(cut -f2 <<< "${line}") && scanning_path="./$(cut -f1 <<< "${line}")${TAB}./${file}"
+
     is_symlink "${file}" && continue
     is_directory "${file}" && continue
     is_matched_by_path "${file}" "${INPUT_EXCLUDE_PATH-}" && continue
-    is_matched_by_path "${file}" "${INPUT_INCLUDE_PATH-}" && scripts_for_scanning+=("./${file}") && continue
-    is_shell_extension "${file}" && scripts_for_scanning+=("./${file}") && continue
-    has_shebang "${file}" && scripts_for_scanning+=("./${file}")
+    is_matched_by_path "${file}" "${INPUT_INCLUDE_PATH-}" && scripts_for_scanning+=("${scanning_path}") && continue
+    is_shell_extension "${file}" && scripts_for_scanning+=("${scanning_path}") && continue
+    has_shebang "${file}" && scripts_for_scanning+=("${scanning_path}")
   done
 
   eval "${output}"=\("${scripts_for_scanning[*]@Q}"\)
@@ -233,6 +242,65 @@ file_to_array () {
   is_unit_tests && echo "${output[@]}"
 
   eval "${2}"=\("${output[*]@Q}"\)
+}
+
+# Function that reads a file and stores them in an array
+# file is expected to have format of: <type><tab><path><?tab><?path>
+# https://stackoverflow.com/a/28109890/10221282
+# $1 - file path
+# $2 - name of a variable where the result array will be stored
+# $? - return value - 0 on success
+tab_separated_file_to_array () {
+  [[ $# -le 1 ]] && return 1
+  local output=()
+
+  # https://stackoverflow.com/a/12916758/10221282
+  while IFS=$'\t' read -r -a data || [[ -n "${data[*]}" ]]; do
+    base_path="${data[1]}"
+    head_path=""
+
+    case "${data[0]}" in
+      R)
+        echo "::debug::Renamed file detected: ${data[*]}"
+        head_path="${data[2]}"
+        ;;
+
+      *)
+        head_path="${data[1]}"
+        ;;
+    esac
+
+    is_file_inside_scan_directory "${head_path}" || continue
+
+    output+=("${base_path}${TAB}${head_path}")
+  done < "${1}"
+
+  is_unit_tests && echo "${output[@]}"
+
+  eval "${2}"=\("${output[*]@Q}"\)
+}
+
+# Function to split array by tabulator into two separate arrays
+# $1 - <string> name of a variable where the first array will be stored
+# $2 - <string> name of a variable where the second array will be stored
+# $@ - <array> array to split
+split_array_by_tab () {
+  [[ $# -le 2 ]] && return 1
+
+  local paths=("${@:3}")
+  local base_paths=()
+  local head_paths=()
+
+  for item in "${paths[@]}"; do
+    IFS=$'\t' read -r -a paths <<< "${item}"
+    base_paths+=("${paths[0]}")
+    head_paths+=("${paths[1]}")
+  done
+
+  is_unit_tests && echo "${base_paths[@]}" && echo "${head_paths[@]}"
+
+  eval "${1}"=\("${base_paths[*]@Q}"\)
+  eval "${2}"=\("${head_paths[*]@Q}"\)
 }
 
 # Function to test if given file is inside the scan directory
@@ -414,3 +482,5 @@ export ORANGE='\033[0;33m'
 export BLUE='\033[0;34m'
 export YELLOW='\033[1;33m'
 export WHITE='\033[1;37m'
+
+export TAB=$'\t'
