@@ -4,25 +4,25 @@
 # Quoting
 # =======
 
-# echo $1                           # Unquoted variables
-# rm "~/my file.txt"                # Quoted tilde expansion
+echo $1                           # Unquoted variables
+rm "~/my file.txt"                # Quoted tilde expansion
 # v='--verbose="true"'; cmd $v      # Literal quotes in variables
 # touch $@                          # Unquoted $@
 # echo 'Path is $PATH'              # Variables in single quotes
-# trap "echo Took ${SECONDS}s" 0    # Prematurely expanded trap
+trap "echo Took ${SECONDS}s" 0    # Prematurely expanded trap
 # unset var[i]                      # Array index treated as glob
 
 # Conditionals
 # ============
 
-# [[ n != 0 ]]                      # Constant test expressions
+[[ n != 0 ]]                      # Constant test expressions
 # [[ -e *.mpg ]]                    # Existence checks of globs
 # [[ $foo==0 ]]                     # Always true due to missing spaces
 # [[ -n "$foo " ]]                  # Always true due to literals
 # [[ $foo =~ "fo+" ]]               # Quoted regex in =~
 # [ foo =~ re ]                     # Unsupported [ ] operators
 # [ $1 -eq "shellcheck" ]           # Numerical comparison of strings
-# [ $n && $m ]                      # && in [ .. ]
+[ $n && $m ]                      # && in [ .. ]
 # [[ "$$file" == *.jpg ]]           # Comparisons that can't succeed
 # (( 1 -lt 2 ))                     # Using test operators in ((..))
 # [ x ] & [ y ] | [ z ]             # Accidental backgrounding and piping
