@@ -87,10 +87,10 @@ if ! is_strict_check_on_push_demanded; then
   file_rename_option=""
   file_rename_option=$(get_csdiff_file_rename "${#changed_scripts_base[@]}" "${changed_scripts_base[@]}" "${changed_scripts_head[@]}")
 
-  get_fixes "${file_rename_option}" "${WORK_DIR}base-shellcheck.err" "${WORK_DIR}head-shellcheck.err"
+  get_fixes "${WORK_DIR}base-shellcheck.err" "${WORK_DIR}head-shellcheck.err" "${file_rename_option}"
   evaluate_and_print_fixes
 
-  get_defects "${file_rename_option}" "${WORK_DIR}head-shellcheck.err" "${WORK_DIR}base-shellcheck.err"
+  get_defects "${WORK_DIR}head-shellcheck.err" "${WORK_DIR}base-shellcheck.err" "${file_rename_option}"
 else
   mv "${WORK_DIR}full-shellcheck.err" "${WORK_DIR}defects.log"
 fi
