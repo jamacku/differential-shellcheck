@@ -18,6 +18,7 @@ get_fixes () {
   local file_rename="${3}"
 
   if [[ -n "${file_rename}" ]]; then
+    echo "csdiff --fixed ${file_rename} ${1} ${2}"
     csdiff --fixed "${file_rename}" "${1}" "${2}" > "${WORK_DIR}fixes.log"
     return
   fi
@@ -76,6 +77,7 @@ get_defects () {
   local file_rename="${3}"
 
   if [[ -n "${file_rename}" ]]; then
+    echo "csdiff ${file_rename} ${2} ${1}"
     csdiff "${file_rename}" "${2}" "${1}" > "${WORK_DIR}defects.log"
     return
   fi
