@@ -9,10 +9,18 @@ WORK_DIR="${WORK_DIR-../}"
 # Get file containing fixes based on two input files
 # $1 - <string> absolute path to a file containing results from BASE scan
 # $2 - <string> absolute path to a file containing results from HEAD scan
+# $3 - <string> file-rename option for csdiff
 # $? - return value - 0 on success
 # results are returned in file - '../fixes.log'
 get_fixes () {
   [[ $# -le 1 ]] && return 1
+
+  local file_rename="${3}"
+
+  if [[ -n "${file_rename}" ]]; then
+    csdiff --fixed "${file_rename}" "${1}" "${2}" > "${WORK_DIR}fixes.log"
+    return
+  fi
 
   csdiff --fixed "${1}" "${2}" > "${WORK_DIR}fixes.log"
 }
@@ -59,12 +67,20 @@ evaluate_and_print_fixes () {
 # Get file containing defects based on two input files
 # $1 - <string> absolute path to a file containing results from HEAD scan
 # $2 - <string> absolute path to a file containing results from BASE scan
+# $3 - <string> file-rename option for csdiff
 # $? - return value - 0 on success
 # results are returned in file - '../defects.log'
 get_defects () {
   [[ $# -le 1 ]] && return 1
 
-  csdiff --fixed "${1}" "${2}" > "${WORK_DIR}defects.log"
+  local file_rename="${3}"
+
+  if [[ -n "${file_rename}" ]]; then
+    csdiff "${file_rename}" "${2}" "${1}" > "${WORK_DIR}defects.log"
+    return
+  fi
+
+  csdiff "${2}" "${1}" > "${WORK_DIR}defects.log"
 }
 
 # Function to evaluate results of defects and to provide feedback on standard output

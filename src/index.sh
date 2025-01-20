@@ -51,7 +51,7 @@ if ! [[ ${FULL_SCAN} -eq 0 ]] || ! is_strict_check_on_push_demanded; then
 
   changed_scripts_base=()
   changed_scripts_head=()
-  split_array_by_tab "${only_changed_scripts[@]}" "changed_scripts_base" "changed_scripts_head"
+  split_array_by_tab "changed_scripts_base" "changed_scripts_head" "${only_changed_scripts[@]}"
 fi
 
 echo -e "${VERSIONS_HEADING}"
@@ -84,10 +84,13 @@ if ! is_strict_check_on_push_demanded; then
 
   execute_shellcheck "${changed_scripts_base[@]}" > "${WORK_DIR}base-shellcheck.err"
 
-  get_fixes "${WORK_DIR}base-shellcheck.err" "${WORK_DIR}head-shellcheck.err"
+  file_rename_option=""
+  file_rename_option=$(get_csdiff_file_rename "${#changed_scripts_base[@]}" "${changed_scripts_base[@]}" "${changed_scripts_head[@]}")
+
+  get_fixes "${file_rename_option}" "${WORK_DIR}base-shellcheck.err" "${WORK_DIR}head-shellcheck.err"
   evaluate_and_print_fixes
 
-  get_defects "${WORK_DIR}head-shellcheck.err" "${WORK_DIR}base-shellcheck.err"
+  get_defects "${file_rename_option}" "${WORK_DIR}head-shellcheck.err" "${WORK_DIR}base-shellcheck.err"
 else
   mv "${WORK_DIR}full-shellcheck.err" "${WORK_DIR}defects.log"
 fi

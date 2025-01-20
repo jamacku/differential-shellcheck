@@ -11,7 +11,7 @@ setup () {
   load 'test_helper/bats-file/load'
 }
 
-@test "get_fixes()" {
+@test "get_fixes() - general" {
   source "${PROJECT_ROOT}/src/validation.sh"
 
   run get_fixes

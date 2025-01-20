@@ -303,6 +303,27 @@ split_array_by_tab () {
   eval "${2}"=\("${head_paths[*]@Q}"\)
 }
 
+
+# Function to get values for csdiff --file-rename option
+# $1 - <number> size of the array
+# $2 - <array> array containing values from BASE scan
+# $3 - <array> array containing values from HEAD scan
+get_csdiff_file_rename () {
+  local size=${1}
+  shift
+  local base=("${@:1:${size}}")
+  shift "${size}"
+  local head=("${@}")
+
+  local rename_files=()
+  for i in "${!base[@]}"; do
+    [[ "${base[i]}" == "${head[i]}" ]] && continue
+    rename_files+=("--file-rename ${changed_scripts_base[i]} ${changed_scripts_head[i]}")
+  done
+
+  echo "${rename_files[@]}"
+}
+
 # Function to test if given file is inside the scan directory
 # $1 - <string> file path
 # $? - return value - 0 on success
