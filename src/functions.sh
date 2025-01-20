@@ -318,7 +318,7 @@ get_csdiff_file_rename () {
   local rename_files=()
   for i in "${!base[@]}"; do
     [[ "${base[i]}" == "${head[i]}" ]] && continue
-    rename_files+=("--file-rename ${changed_scripts_base[i]} ${changed_scripts_head[i]}")
+    rename_files+=("--file-rename ${changed_scripts_base[i]},${changed_scripts_head[i]}")
   done
 
   echo "${rename_files[@]}"
