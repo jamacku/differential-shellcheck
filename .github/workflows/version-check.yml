@@ -1,0 +1,28 @@
+---
+
+name: Version Consistency Check
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - VERSION
+      - action.yml
+      - differential-shellcheck.spec
+      - README.md
+      - docs/differential-shellcheck.1.md
+      - scripts/version-bump.sh
+
+permissions:
+  contents: read
+
+jobs:
+  check-version:
+    name: Verify version strings are in sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Check version consistency
+        run: scripts/version-bump.sh --check

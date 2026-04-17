@@ -107,3 +107,17 @@ uninstall:
 	rm -rf $(DESTDIR)$(LICENSEDIR)
 
 .PHONY: install uninstall
+
+# --- Version management ---
+
+version-bump:
+	@scripts/version-bump.sh
+
+version-bump-to:
+	@test -n "$(V)" || { echo "Usage: make version-bump-to V=5.7.0"; exit 1; }
+	@scripts/version-bump.sh $(V)
+
+version-check:
+	@scripts/version-bump.sh --check
+
+.PHONY: version-bump version-bump-to version-check

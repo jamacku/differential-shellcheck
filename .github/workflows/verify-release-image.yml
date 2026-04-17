@@ -1,0 +1,38 @@
+---
+
+name: Verify Release Image
+on:
+  workflow_run:
+    workflows: ["Deploy Release"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  verify-image:
+    name: Verify action.yml Docker image exists
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Extract image reference from action.yml
+        id: extract
+        run: |
+          IMAGE_REF=$(grep -oE 'docker://[^[:space:]]+' action.yml | sed 's|docker://||')
+          echo "image=${IMAGE_REF}" >> "${GITHUB_OUTPUT}"
+          echo "Verifying image: ${IMAGE_REF}"
+
+      - name: Verify image exists in registry
+        run: |
+          docker manifest inspect "${{ steps.extract.outputs.image }}" > /dev/null 2>&1 || {
+            echo "::error::Docker image ${{ steps.extract.outputs.image }} not found in registry!"
+            echo "The action.yml references an image that does not exist."
+            echo "Ensure the version was bumped before release: make version-bump-to V=X.Y.Z"
+            exit 1
+          }
+          echo "Image verified successfully."
